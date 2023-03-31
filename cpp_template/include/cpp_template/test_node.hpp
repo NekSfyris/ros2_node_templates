@@ -13,8 +13,8 @@
 // for tf2 transformations
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
-#include <tf2_eigen/tf2_eigen.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_eigen/tf2_eigen.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 // px4 messages for ros2
 #include <px4_msgs/msg/vehicle_imu.hpp>
@@ -30,7 +30,8 @@
 #include "message_filters/synchronizer.h"
 
 using namespace std;
-
+using namespace std::placeholders;
+using std::placeholders::_2;
 
 
 std::shared_ptr<rclcpp::Node> node = nullptr;
@@ -46,7 +47,7 @@ public:
 
 private:
 
-  std::string odom_source"/fmu/vehicle_odometry/out";
+  std::string odom_source{"/fmu/vehicle_odometry/out"};
   std::string pub_source;
 
   // parameters
@@ -56,7 +57,7 @@ private:
 
   px4_msgs::msg::VehicleOdometry _odom_data;
 
-  rclcpp::Publisher<std_msgs::msg::float64>::SharedPtr _topic_publisher;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _topic_publisher;
   rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr _odom_subscriber;
   
   // Callback function

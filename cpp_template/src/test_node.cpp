@@ -44,7 +44,7 @@ Node("test_node")
             (odom_source, sensor_qos, std::bind(&TestNode::odomCallback, this, _1));
 
   // publishers
-  _topic_publisher = this->create_publisher<std_msgs::msg::float64>(pub_source, 10);
+  _topic_publisher = this->create_publisher<std_msgs::msg::Float64>(pub_source, 10);
 
 }
 
@@ -59,7 +59,7 @@ TestNode::~TestNode()
 void TestNode::publishMessage()
 {
 
-  std_msgs::msg::float64 _pub_msg;
+  std_msgs::msg::Float64 _pub_msg;
   _pub_msg.data = _odom_data.vy;
 
   RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", std::to_string(_camera_frame_height).c_str());
