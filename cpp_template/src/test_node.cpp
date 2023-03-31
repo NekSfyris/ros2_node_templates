@@ -35,7 +35,12 @@ Node("test_node")
   odom_source = odom_source_temp.as_string();
   pub_source = _pub_source_temp.as_string();
 
-  // RCLCPP_INFO(this->get_logger(), std::to_string(_camera_frame_height).c_str());
+  // define quality of service: all messages that you want to receive must have the same
+  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
+  custom_qos_profile.depth = 1;
+  custom_qos_profile.reliability = rmw_qos_reliability_policy_t::RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
+  custom_qos_profile.history = rmw_qos_history_policy_t::RMW_QOS_POLICY_HISTORY_KEEP_LAST;
+  custom_qos_profile.durability = rmw_qos_durability_policy_t::RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
 
   auto sensor_qos = rclcpp::QoS(rclcpp::KeepLast(10), rmw_qos_profile_sensor_data);
 
@@ -45,6 +50,16 @@ Node("test_node")
 
   // publishers
   _topic_publisher = this->create_publisher<std_msgs::msg::Float64>(pub_source, 10);
+
+
+  // synchronized subscribers
+  _imu_subscriber.subscribe(this, imu_source, custom_qos_profile);
+  _global_position_subscriber.subscribe(this, lla_source, custom_qos_profile);
+
+  sync.reset(new message_filters::Synchronizer<approximate_policy>(approximate_policy(10), _imu_subscriber, _global_position_subscriber));
+
+  // register the approximate time callback
+  sync->registerCallback(&TestNode::syncedCallback, this);
 
 }
 
@@ -67,6 +82,7 @@ void TestNode::publishMessage()
   _topic_publisher->publish(_pub_msg);
 }
 
+// Normal callback
 void TestNode::odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr msg)
 {
   // in NED
@@ -76,8 +92,16 @@ void TestNode::odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr msg)
 
 }
 
+// Synchronized callback
+void TestNode::syncedCallback(const px4_msgs::msg::VehicleImu::SharedPtr imuMsg, const px4_msgs::msg::VehicleGlobalPosition::SharedPtr globalPositionMsg)
+{
+  RCLCPP_INFO(this->get_logger(), "Synch Callback called!");
+}
 
 
+// ----------
+// ---MAIN---
+// ----------
 int main(int argc, char **argv)
 {
 

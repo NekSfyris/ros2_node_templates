@@ -48,6 +48,8 @@ public:
 private:
 
   std::string odom_source{"/fmu/vehicle_odometry/out"};
+  std::string imu_source {"/fmu/vehicle_imu/out"};
+  std::string lla_source {"/fmu/vehicle_global_position/out"};
   std::string pub_source;
 
   // parameters
@@ -59,12 +61,22 @@ private:
 
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _topic_publisher;
   rclcpp::Subscription<px4_msgs::msg::VehicleOdometry>::SharedPtr _odom_subscriber;
-  
+  message_filters::Subscriber<px4_msgs::msg::VehicleImu> _imu_subscriber;
+  message_filters::Subscriber<px4_msgs::msg::VehicleGlobalPosition> _global_position_subscriber;
+
+
+  using approximate_policy = message_filters::sync_policies::ApproximateTime<px4_msgs::msg::VehicleImu, px4_msgs::msg::VehicleGlobalPosition>;
+  typedef message_filters::Synchronizer<approximate_policy> Synchronizer;
+  std::unique_ptr<Synchronizer> sync;
+
   // Callback function
   void odomCallback(const px4_msgs::msg::VehicleOdometry::SharedPtr msg);
 
   // Publish messages
   void publishMessage();
+
+  // Synchronized callback
+  void syncedCallback(const px4_msgs::msg::VehicleImu::SharedPtr imuMsg, const px4_msgs::msg::VehicleGlobalPosition::SharedPtr globalPositionMsg);
 
 
   std::vector<double> quaternionToEuler(const geometry_msgs::msg::Quaternion& quat);
