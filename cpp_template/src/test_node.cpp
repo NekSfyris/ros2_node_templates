@@ -5,7 +5,7 @@
  * Constructor.
  *------------------------------------------------------------------*/
 TestNode::TestNode():
-Node("camera_raw_los_publisher")
+Node("test_node")
 // sync(MySyncPolicy(10), _imu_subscriber, _bounding_box_subscriber)
 { 
   // all params to be used
@@ -61,6 +61,8 @@ void TestNode::publishMessage()
 
   std_msgs::msg::float64 _pub_msg;
   _pub_msg.data = _odom_data.vy;
+
+  RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", std::to_string(_camera_frame_height).c_str());
 
   _topic_publisher->publish(_pub_msg);
 }

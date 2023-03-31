@@ -29,13 +29,11 @@
 #include "message_filters/sync_policies/exact_time.h"
 #include "message_filters/synchronizer.h"
 
-
-
-std::shared_ptr<rclcpp::Node> node = nullptr;
-
 using namespace std;
 
 
+
+std::shared_ptr<rclcpp::Node> node = nullptr;
 
 class TestNode : public rclcpp::Node
 {
