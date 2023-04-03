@@ -1,0 +1,19 @@
+node1:
+  ros__parameters:
+    local_velocity_source: "fmu/vehicle_local_position/out"
+    los_filter_rate: 20.0 # Hz. This is the the rate at which the KF will run once the detection starts. 
+    los_filter_timeout: 5.0 
+    camera_source: "camera_raw_los_publisher"
+      
+node2:
+  ros__parameters:
+    local_velocity_source: "fmu/vehicle_local_position/out"
+    los_filter_rate: 20.0 
+    los_filter_timeout: 3.0 
+
+test_node:
+  ros__parameters:
+    sensor_height_px: 1080
+    sensor_width_px: 1920
+    odom_source: fmu/vehicle_odometry/out
+    pub_source: pub_topic

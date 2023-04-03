@@ -1,0 +1,9 @@
+<launch>
+
+    <!-- <include file="$(find-pkg-share another_pkg)/launch/launch_file.xml"/> -->
+
+    <node pkg="cpp_template" exec="test_node" name="test_node">
+        <param from="$(find-pkg-share cpp_template)/config/config.yaml"/>
+    </node>
+
+</launch>
